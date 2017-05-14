@@ -1,0 +1,40 @@
+#
+# Description
+# -----------
+# This table stores the ax25 packets received from the tnc.
+#
+# Fields
+# ------
+# id:                       The ID assigned to the item.
+# uuid:                     The Universal Unique ID.
+# station_id:               The station the item is attached to.
+#
+# status:                   The status of the packet.
+#
+#                               10 - Received
+#                               20 - Processed
+#
+#                               50 - Queued to Send
+#                               60 - Sent
+#
+# utc_of_traffic:           The UTC date and time heard on the TNC.
+#
+# raw_packet:               The raw binary packet string.
+#
+# date_added:               The UTC date and time the record was added.
+# last_updated:             The UTC date and time the record was last updated.
+#
+create table qruqsp_tnc_ax25packets (
+    id int not null auto_increment,
+    uuid char(36) not null,
+    station_id int not null,
+    status tinyint unsigned not null,
+    utc_of_traffic datetime not null,
+    raw_packet varchar(10000) not null,
+    date_added datetime not null,
+    last_updated datetime not null,
+    primary key (id),
+    unique index (uuid),
+    index (utc_of_traffic),
+    index sync (station_id, uuid, last_updated)
+) ENGINE='InnoDB', COMMENT='v1.01';
