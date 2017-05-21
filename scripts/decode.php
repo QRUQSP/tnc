@@ -41,10 +41,10 @@ if( !isset($q['config']['qruqsp.tnc']['pts']) ) {
     exit;
 }
 
-$strsql = "SELECT status, utc_of_traffic, raw_packet "
+$strsql = "SELECT station_id, status, utc_of_traffic, raw_packet "
     . "FROM qruqsp_tnc_kisspackets "
     . "ORDER BY utc_of_traffic DESC "
-    . "LIMIT 10 "
+    . "LIMIT 1 "
     . "";
 qruqsp_core_loadMethod($q, 'qruqsp', 'core', 'private', 'dbHashQuery');
 $rc = qruqsp_core_dbHashQuery($q, $strsql, 'qruqsp.tnc', 'item');
@@ -52,8 +52,14 @@ if( $rc['stat'] != 'ok' ) {
     print_r($rc);
 }
 
+qruqsp_core_loadMethod($q, 'qruqsp', 'tnc', 'private', 'packetDecode');
 foreach($rc['rows'] as $row) {
-    print bin2hex($row['raw_packet']) . "\n";
+    $rc = qruqsp_tnc_packetDecode($q, $row['station_id'], $row['raw_packet']);
+    if( $rc['stat'] != 'ok' ) {
+        print_r($rc);
+    } else {
+        print_r($rc['packet']);
+    }
 }
 
 exit;
