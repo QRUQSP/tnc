@@ -21,6 +21,13 @@
 #
 # raw_packet:               The raw binary packet string.
 #
+# port:                     The port the packet was sent.
+# command:                  The command for the packet.
+# control:                  The control code of the packet.
+# protocol:                 The protocol for the packet.
+#
+# data:                     The extract data for the packet.
+#
 # date_added:               The UTC date and time the record was added.
 # last_updated:             The UTC date and time the record was last updated.
 #
@@ -33,11 +40,13 @@ create table qruqsp_tnc_kisspackets (
     raw_packet varchar(5000) not null,
     port tinyint unsigned not null,
     command tinyint unsigned not null,
-    dest_callsign varchar(20) not null,
-    dest_ssid varchar(5) not null,
-    src_callsign varchar(20) not null,
-    src_ssid varchar(5) not null,
-    digipeaters varchar(50) not null,
+    control tinyint unsigned not null,
+    protocol tinyint unsigned not null,
+#    dest_callsign varchar(20) not null,
+#    dest_ssid varchar(5) not null,
+#    src_callsign varchar(20) not null,
+#    src_ssid varchar(5) not null,
+#    digipeaters varchar(50) not null,
     data varchar(5000) not null,
     date_added datetime not null,
     last_updated datetime not null,

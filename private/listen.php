@@ -61,11 +61,21 @@ function qruqsp_tnc_listen($q, $station_id, $pts) {
                 return $rc;
             }
             if( isset($rc['packet']) ) {
-                $rc = qruqsp_tnc_packetStoreProcess($q, $station_id, $rc['packet']);
-                if( $rc['stat'] != 'ok' ) {
-                    print "ERR: Unable to store packet\n";
-                    print_r($rc);
-                }
+                //
+                // Fork the process and store and process the packet
+                //
+/*                $pid = pcntl_fork();
+                if( $pid == -1 ) {
+                    print "ERR: Unable to fork\n";
+                    exit;
+                } elseif( $pid == 0 ) {
+                    $rc = qruqsp_tnc_packetStoreProcess($q, $station_id, $rc['packet']);
+                    if( $rc['stat'] != 'ok' ) {
+                        print "ERR: Unable to store packet\n";
+                        print_r($rc);
+                    }
+                    exit;
+                } */
             }
         }
     }

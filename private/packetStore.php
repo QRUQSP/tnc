@@ -9,7 +9,7 @@
 // q:
 // packet:          The packet to be stored and processed
 //
-function qruqsp_tnc_packetStoreProcess($q, $station_id, $packet_data) {
+function qruqsp_tnc_packetStore($q, $station_id, $packet_data) {
 
     $dt = new DateTime('now', new DateTimezone('UTC'));
 
@@ -23,20 +23,6 @@ function qruqsp_tnc_packetStoreProcess($q, $station_id, $packet_data) {
         return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.2', 'msg'=>'Unable to add packet', 'err'=>$rc['err']));
     }
 
-    $packet = array(
-        'id' => $rc['id'],
-        'raw_packet' => $packet_data,
-        );
-
-    //
-    // Decode the packet
-    //
-    qruqsp_core_loadMethod($q, 'qruqsp', 'tnc', 'private', 'packetDecode');
-    $rc = qruqsp_tnc_packetDecode($q, $station_id, $packet);
-    if( $rc['stat'] != 'ok' ) {
-        return $rc;
-    }
-
-    return array('stat'=>'ok', 'packet'=>$rc['packet']);
+    return array('stat'=>'ok', 'id'=>$rc['id']);
 }
 ?>

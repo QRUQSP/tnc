@@ -41,7 +41,7 @@ if( !isset($q['config']['qruqsp.tnc']['pts']) ) {
     exit;
 }
 
-$strsql = "SELECT status, utc_of_traffic, raw_packet "
+$strsql = "SELECT status, utc_of_traffic, raw_packet, data "
     . "FROM qruqsp_tnc_kisspackets "
     . "ORDER BY utc_of_traffic DESC "
     . "LIMIT 10 "
@@ -53,7 +53,7 @@ if( $rc['stat'] != 'ok' ) {
 }
 
 foreach($rc['rows'] as $row) {
-    print bin2hex($row['raw_packet']) . "\n";
+    print $row['data'] . "\n";
 }
 
 exit;

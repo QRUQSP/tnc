@@ -1,0 +1,50 @@
+#
+# Description
+# -----------
+# This table stores the kiss packets received from the tnc.
+#
+# Fields
+# ------
+# id:                       The ID assigned to the item.
+# uuid:                     The Universal Unique ID.
+# station_id:               The station the item is attached to.
+#
+# packet_id:                The ID of the packet the address is attached to.
+#
+# atype:                    The type of the packet.
+#
+#                               10 - Destination
+#                               20 - Source
+#                               30 - Digipeater
+#
+# sequence:                 The order of the address.
+#
+#                               1 - Destination
+#                               2 - Source
+#                               3-X - Digipeaters
+#
+# flags:                    The flags set in the packet for the address.
+#
+# callsign:                 The callsign for the address.
+# ssid:                     The SSID for the address.
+#
+# date_added:               The UTC date and time the record was added.
+# last_updated:             The UTC date and time the record was last updated.
+#
+create table qruqsp_tnc_kisspacket_addrs (
+    id int not null auto_increment,
+    uuid char(36) not null,
+    station_id int not null,
+    packet_id int not null,
+    atype tinyint unsigned not null,
+    sequence tinyint unsigned not null,
+    flags tinyint unsigned not null,
+    callsign varchar(25) not null,
+    ssid tinyint unsigned not null,
+    date_added datetime not null,
+    last_updated datetime not null,
+    primary key (id),
+    unique index (uuid),
+    index (packet_id),
+    index sync (station_id, uuid, last_updated)
+) ENGINE='InnoDB', COMMENT='v1.01';
