@@ -78,14 +78,16 @@ if( $rc['stat'] != 'ok' ) {
 }
 $packets = $rc['packets'];
 
+qruqsp_core_loadMethod($q, 'qruqsp', 'aprs', 'hooks', 'packetReceived');
 foreach($packets as $p) {
-    $addrs = '';
+    $rc = qruqsp_aprs_hooks_packetReceived($q, $p['station_id'], array('packet'=>$p));
+/*    $addrs = '';
     if( isset($p['addrs']) ) {
         foreach($p['addrs'] as $a) {
             $addrs .= ($addrs != '' ? ' > ' : '') . trim($a['callsign']) . ($a['ssid'] > 0 ? sprintf("-%d", $a['ssid']) : '') . sprintf(":%d", $a['flags']);
         }
     }
-    printf("%6d %-75s%s\n", $p['id'], $addrs, $p['data']);
+    printf("%6d %-75s%s\n", $p['id'], $addrs, $p['data']); */
 }
 
 exit;

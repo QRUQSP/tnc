@@ -36,7 +36,7 @@ function qruqsp_tnc_packetsDecode($q, $station_id, $args) {
             . "AND p.station_id = a.station_id "
             . ") "
         . "WHERE p.status = 10 "
-        . "ORDER BY p.utc_of_traffic DESC, a.sequence "
+        . "ORDER BY p.utc_of_traffic DESC, p.id, a.sequence "
         . "";
     qruqsp_core_loadMethod($q, 'qruqsp', 'core', 'private', 'dbHashQueryArrayTree');
     $rc = qruqsp_core_dbHashQueryArrayTree($q, $strsql, 'qruqsp.tnc', array(
