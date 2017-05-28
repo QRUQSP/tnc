@@ -206,7 +206,7 @@ function qruqsp_tnc_packetDecode($q, $station_id, $p) {
     }
 
     //
-    // Check if any hooks can deal with this packet
+    // FIXME: Check if any hooks can deal with this packet
     //
 
     return array('stat'=>'ok', 'packet'=>$pkt);
