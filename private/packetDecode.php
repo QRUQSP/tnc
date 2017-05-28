@@ -85,6 +85,7 @@ function qruqsp_tnc_packetDecode($q, $station_id, $p) {
             break;
         }
         $c++;
+
         //
         // Setup the next type of address
         //
@@ -206,7 +207,7 @@ function qruqsp_tnc_packetDecode($q, $station_id, $p) {
     }
 
     //
-    // FIXME: Check if any hooks can deal with this packet
+    // FIXME: Check for hooks to receive packet
     //
 
     return array('stat'=>'ok', 'packet'=>$pkt);
