@@ -2,4 +2,3 @@
 # Add index for callsign
 #
 ALTER TABLE qruqsp_tnc_kisspackets ADD COLUMN addresses varchar(250) not null AFTER protocol;
-UPDATE qruqsp_tnc_kisspackets AS p, (SELECT GROUP_CONCAT(CONCAT_WS('-', callsign, ssid) ORDER BY sequence SEPARATOR ' > ') AS addresses FROM qruqsp_tnc_kisspacket_addrs) AS addrs SET p.addresses = addresses WHERE p.id = a.packet_id AND a.atype > 10;
