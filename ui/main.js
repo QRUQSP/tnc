@@ -5,16 +5,36 @@ function qruqsp_tnc_main() {
     //
     // The panel to list the kisspacket
     //
-    this.menu = new Q.panel('kisspacket', 'qruqsp_tnc_main', 'menu', 'mc', 'medium', 'sectioned', 'qruqsp.tnc.main.menu');
+    this.menu = new Q.panel('kisspacket', 'qruqsp_tnc_main', 'menu', 'mc', 'large narrowaside', 'sectioned', 'qruqsp.tnc.main.menu');
     this.menu.data = {};
     this.menu.nplist = [];
     this.menu.sections = {
+        'stats':{'label':'Stats', 'type':'simplegrid', 'aside':'yes', 'num_cols':2,
+            'cellClasses':['', 'alignright'],
+            },
+        'sources5total':{'label':'Top 5 Sources', 'type':'simplegrid', 'aside':'yes', 'num_cols':3,
+            'cellClasses':['', 'alignright', 'alignright'],
+            'noData':'No sources found',
+            },
+        'sources5last7days':{'label':'Last 7 Days', 'type':'simplegrid', 'aside':'yes', 'num_cols':3,
+            'cellClasses':['', 'alignright', 'alignright'],
+            'noData':'Nothing last 7 days',
+            },
+        'digipeaters5total':{'label':'Top 5 Digipeaters', 'type':'simplegrid', 'aside':'yes', 'num_cols':3,
+            'cellClasses':['', 'alignright', 'alignright'],
+            'noData':'No digipeaters found',
+            },
+        'digipeaters5last7days':{'label':'Last 7 Days', 'type':'simplegrid', 'aside':'yes', 'num_cols':3,
+            'cellClasses':['', 'alignright', 'alignright'],
+            'noData':'Nothing last 7 days',
+            },
         'search':{'label':'', 'type':'livesearchgrid', 'livesearchcols':1,
-            'cellClasses':[''],
+            'cellClasses':['multiline'],
             'hint':'Search kisspacket',
             'noData':'No kisspacket found',
             },
         'packets':{'label':'KISS TNC Packet', 'type':'simplegrid', 'num_cols':1,
+            'cellClasses':['multiline'],
             'noData':'No kisspacket',
             'addTxt':'Add KISS TNC Packet',
             'addFn':'Q.qruqsp_tnc_main.packet.open(\'Q.qruqsp_tnc_main.menu.open();\',0,null);'
@@ -28,17 +48,36 @@ function qruqsp_tnc_main() {
         }
     }
     this.menu.liveSearchResultValue = function(s, f, i, j, d) {
-        return d.utc_of_traffic;
+        return '<span class="maintext">' + d.utc_of_traffic + ' <span class="subdue">' + d.addresses + '</span></span><span class="subsubtext">' + d.data + '</span>';
     }
     this.menu.liveSearchResultRowFn = function(s, f, i, j, d) {
         return 'Q.qruqsp_tnc_main.packet.open(\'Q.qruqsp_tnc_main.menu.open();\',\'' + d.id + '\');';
     }
     this.menu.cellValue = function(s, i, j, d) {
-        if( s == 'packets' ) {
+        if( s == 'stats' ) {
             switch(j) {
-                case 0: return d.utc_of_traffic;
+                case 0: return d.label;
+                case 1: return d.value;
             }
         }
+        if( s == 'sources5total' || s == 'sources5last7days' || s == 'digipeaters5total' || s == 'digipeaters5last7days' ) {
+            switch(j) {
+                case 0: return d.label;
+                case 1: return d.value;
+                case 2: return d.percent + '%';
+            }
+        }
+        if( s == 'packets' ) {
+            switch(j) {
+                case 0: return '<span class="maintext">' + d.utc_of_traffic + ' <span class="subdue">' + d.addresses + '</span></span><span class="subsubtext">' + d.data + '</span>';
+            }
+        }
+    }
+    this.menu.noData = function(s) {
+        if( this.sections[s].noData != null ) {
+            return this.sections[s].noData;
+        }
+        return null;
     }
     this.menu.rowFn = function(s, i, d) {
         if( s == 'packets' ) {

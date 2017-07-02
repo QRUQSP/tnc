@@ -46,5 +46,6 @@ create table qruqsp_tnc_kisspacket_addrs (
     primary key (id),
     unique index (uuid),
     index (packet_id),
+    index (callsign),
     index sync (station_id, uuid, last_updated)
-) ENGINE='InnoDB', COMMENT='v1.01';
+) ENGINE='InnoDB', COMMENT='v1.02';

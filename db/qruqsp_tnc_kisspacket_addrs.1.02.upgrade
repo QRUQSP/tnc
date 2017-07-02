@@ -1,0 +1,4 @@
+#
+# Add index for callsign
+#
+CREATE INDEX callsign ON qruqsp_tnc_kisspacket_addrs (callsign);

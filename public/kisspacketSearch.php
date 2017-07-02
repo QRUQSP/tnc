@@ -36,33 +36,70 @@ function qruqsp_tnc_kisspacketSearch($q) {
         return $rc;
     }
 
+    qruqsp_core_loadMethod($q, 'qruqsp', 'core', 'private', 'datetimeFormat');
+    $datetime_format = qruqsp_core_datetimeFormat($q, 'php');
+
     //
     // Get the list of packets
     //
-    $strsql = "SELECT qruqsp_tnc_kisspackets.id, "
+    $strsql = "SELECT p.id, "
+        . "p.status, "
+        . "p.utc_of_traffic, "
+        . "p.port, "
+        . "p.command, "
+        . "p.control, "
+        . "p.protocol, "
+        . "p.data, "
+        . "p.addresses "
+//        . "a.id AS a_id, "
+//        . "CONCAT_WS('-', a.callsign, a.ssid) AS addresses, "
+//        . "a.callsign, "
+//        . "a.ssid "
+        . "FROM qruqsp_tnc_kisspackets AS p "
+//        . "LEFT JOIN qruqsp_tnc_kisspacket_addrs AS a ON ("
+//            . "p.id = a.packet_id "
+//            . "AND a.station_id = '" . qruqsp_core_dbQuote($q, $args['station_id']) . "' "
+//            . ") "
+        . "WHERE p.station_id = '" . qruqsp_core_dbQuote($q, $args['station_id']) . "' "
+        . "AND ("
+            . "p.data LIKE '%" . qruqsp_core_dbQuote($q, $args['start_needle']) . "%' "
+            . "OR p.addresses LIKE '%" . qruqsp_core_dbQuote($q, $args['start_needle']) . "%' "
+        . ") "
+        . "ORDER BY p.utc_of_traffic DESC "
+        . "LIMIT 250 "
+        . "";
+    qruqsp_core_loadMethod($q, 'qruqsp', 'core', 'private', 'dbHashQueryArrayTree');
+    $rc = qruqsp_core_dbHashQueryArrayTree($q, $strsql, 'qruqsp.tnc', array(
+        array('container'=>'packets', 'fname'=>'id', 
+            'fields'=>array('id', 'status', 'utc_of_traffic', 'port', 'command', 'control', 'protocol', 'data', 'addresses'),
+//            'dlists'=>array('addresses'=>' > '),
+            'utctotz'=>array('utc_of_traffic'=>array('timezone'=>'UTC', 'format'=>$datetime_format)),
+            ),
+        ));
+/*    $strsql = "SELECT qruqsp_tnc_kisspackets.id, "
         . "qruqsp_tnc_kisspackets.status, "
         . "qruqsp_tnc_kisspackets.utc_of_traffic, "
         . "qruqsp_tnc_kisspackets.port, "
         . "qruqsp_tnc_kisspackets.command, "
         . "qruqsp_tnc_kisspackets.control, "
-        . "qruqsp_tnc_kisspackets.protocol "
+        . "qruqsp_tnc_kisspackets.protocol, "
+        . "qruqsp_tnc_kisspackets.data "
         . "FROM qruqsp_tnc_kisspackets "
         . "WHERE qruqsp_tnc_kisspackets.station_id = '" . qruqsp_core_dbQuote($q, $args['station_id']) . "' "
         . "AND ("
-            . "name LIKE '" . qruqsp_core_dbQuote($q, $args['start_needle']) . "%' "
-            . "OR name LIKE '% " . qruqsp_core_dbQuote($q, $args['start_needle']) . "%' "
+            . "data LIKE '%" . qruqsp_core_dbQuote($q, $args['start_needle']) . "%' "
         . ") "
         . "";
     if( isset($args['limit']) && is_numeric($args['limit']) && $args['limit'] > 0 ) {
         $strsql .= "LIMIT " . qruqsp_core_dbQuote($q, $args['limit']) . " ";
     } else {
         $strsql .= "LIMIT 25 ";
-    }
+    } 
     qruqsp_core_loadMethod($q, 'qruqsp', 'core', 'private', 'dbHashQueryArrayTree');
     $rc = qruqsp_core_dbHashQueryArrayTree($q, $strsql, 'qruqsp.tnc', array(
         array('container'=>'packets', 'fname'=>'id', 
-            'fields'=>array('id', 'status', 'utc_of_traffic', 'port', 'command', 'control', 'protocol')),
-        ));
+            'fields'=>array('id', 'status', 'utc_of_traffic', 'port', 'command', 'control', 'protocol', 'data')),
+        )); */
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
