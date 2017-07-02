@@ -37,6 +37,7 @@ function qruqsp_tnc_packetDecode($q, $station_id, $p) {
     // Set addrs and data base to empty
     //
     $pkt['addrs'] = array();
+    $pkt['addresses'] = '';
     $pkt['data'] = '';
 
     //
@@ -73,10 +74,14 @@ function qruqsp_tnc_packetDecode($q, $station_id, $p) {
             $byte = array_shift($bytes);
             $addr['callsign'] .= chr($byte >> 1);
         }
+        $addr['callsign'] = trim($addr['callsign']);
         $byte = array_shift($bytes);
         $addr['flags'] = ($byte>>5)&0x07;
         $addr['ssid'] = ($byte>>1)&0x0f;
         $pkt['addrs'][] = $addr;
+        if( $atype > 10 ) {
+            $pkt['addresses'] .= ($pkt['addresses'] != '' ? ' > ' : '') . $addr['callsign'] . ($addr['ssid'] > 0 ? '-' . $addr['ssid'] : '');
+        }
 
         //
         // The last bit of last byte is 1, then this is the last address.
@@ -144,7 +149,7 @@ function qruqsp_tnc_packetDecode($q, $station_id, $p) {
     //
     // Update the database with packet data
     //
-    $fields = array('status', 'port', 'command', 'control', 'protocol', 'data');
+    $fields = array('status', 'port', 'command', 'control', 'protocol', 'addresses', 'data');
     $update_args = array();
     foreach($fields as $f) {
         if( !isset($p[$f]) || $pkt[$f] != $p[$f] ) {
