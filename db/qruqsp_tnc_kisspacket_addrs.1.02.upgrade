@@ -2,3 +2,4 @@
 # Add index for callsign
 #
 CREATE INDEX callsign ON qruqsp_tnc_kisspacket_addrs (callsign);
+ALTER TABLE qruqsp_tnc_kisspacket_addrs COMMENT='v1.02';

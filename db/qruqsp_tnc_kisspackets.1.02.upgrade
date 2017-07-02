@@ -2,3 +2,4 @@
 # Add index for callsign
 #
 ALTER TABLE qruqsp_tnc_kisspackets ADD COLUMN addresses varchar(250) not null AFTER protocol;
+ALTER TABLE qruqsp_tnc_kisspackets COMMENT='v1.02';
