@@ -31,6 +31,7 @@ function qruqsp_tnc_objects(&$q) {
 //            'src_callsign'=>array('name'=>'Source Callsign', 'default'=>''),
 //            'src_ssid'=>array('name'=>'Source SSID', 'default'=>''),
 //            'digipeaters'=>array('name'=>'Digipeaters', 'default'=>''),
+            'addresses'=>array('name'=>'Addresses', 'default'=>''),
             'data'=>array('name'=>'Data', 'default'=>''),
             ),
         'history_table'=>'qruqsp_tnc_history',
