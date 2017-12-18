@@ -9,12 +9,12 @@
 // q:
 // packet:          The packet to be stored and processed
 //
-function qruqsp_tnc_packetStoreProcess($q, $station_id, $packet_data) {
+function qruqsp_tnc_packetStoreProcess($ciniki, $tnid, $packet_data) {
 
     $dt = new DateTime('now', new DateTimezone('UTC'));
 
-    qruqsp_core_loadMethod($q, 'qruqsp', 'core', 'private', 'objectAdd');
-    $rc = qruqsp_core_objectAdd($q, $station_id, 'qruqsp.tnc.kisspacket', array(    
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
+    $rc = ciniki_core_objectAdd($ciniki, $tnid, 'qruqsp.tnc.kisspacket', array(    
         'status' => 10,
         'utc_of_traffic'=> $dt->format('Y-m-d H:i:s'),
         'raw_packet' => $packet_data,
@@ -31,8 +31,8 @@ function qruqsp_tnc_packetStoreProcess($q, $station_id, $packet_data) {
     //
     // Decode the packet
     //
-    qruqsp_core_loadMethod($q, 'qruqsp', 'tnc', 'private', 'packetDecode');
-    $rc = qruqsp_tnc_packetDecode($q, $station_id, $packet);
+    ciniki_core_loadMethod($ciniki, 'qruqsp', 'tnc', 'private', 'packetDecode');
+    $rc = qruqsp_tnc_packetDecode($ciniki, $tnid, $packet);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }

@@ -10,41 +10,41 @@ $parent_pid = getmypid();
 $pid = pcntl_fork();
 
 //
-// Initialize QRUQSP by including the qruqsp_api.php
+// Initialize QRUQSP by including the ciniki-api.ini
 //
 $start_time = microtime(true);
-global $qruqsp_root;
-$qruqsp_root = dirname(__FILE__);
-if( !file_exists($qruqsp_root . '/qruqsp-api.ini') ) {
-    $qruqsp_root = dirname(dirname(dirname(dirname(__FILE__))));
+global $ciniki_root;
+$ciniki_root = dirname(__FILE__);
+if( !file_exists($ciniki_root . '/ciniki-api.ini') ) {
+    $ciniki_root = dirname(dirname(dirname(dirname(__FILE__))));
 }
 
-require_once($qruqsp_root . '/qruqsp-mods/core/private/loadMethod.php');
-require_once($qruqsp_root . '/qruqsp-mods/core/private/init.php');
+require_once($ciniki_root . '/ciniki-mods/core/private/loadMethod.php');
+require_once($ciniki_root . '/ciniki-mods/core/private/init.php');
 
 
 //
 // Initialize Q
 //
-$rc = qruqsp_core_init($qruqsp_root, 'json');
+$rc = ciniki_core_init($ciniki_root, 'json');
 if( $rc['stat'] != 'ok' ) {
     print "ERR: Unable to initialize Q\n";
     exit;
 }
 
 //
-// Setup the $qruqsp variable to hold all things qruqsp.  
+// Setup the $ciniki variable to hold all things qruqsp.  
 //
-$q = $rc['q'];
+$ciniki = $rc['ciniki'];
 
 //
 // Check for direwolf 
 //
-if( !isset($q['config']['qruqsp.tnc']['pts']) ) {
+if( !isset($ciniki['config']['qruqsp.tnc']['pts']) ) {
     print "ERR: No TNC pts specified\n";
     exit;
 }
-$pts = $q['config']['qruqsp.tnc']['pts'];
+$pts = $ciniki['config']['qruqsp.tnc']['pts'];
 
 //
 // Parent process
@@ -53,11 +53,11 @@ if( $pid > 0 ) {
     //
     // Load required functions
     //
-    qruqsp_core_loadMethod($q, 'qruqsp', 'tnc', 'private', 'packetsDecode');
+    ciniki_core_loadMethod($ciniki, 'qruqsp', 'tnc', 'private', 'packetsDecode');
 
     pcntl_sigprocmask(SIG_BLOCK, array(SIGUSR1));
     while( $signo = pcntl_sigwaitinfo(array(SIGUSR1)) ) {
-        $rc = qruqsp_tnc_packetsDecode($q, $q['config']['qruqsp.tnc']['station_id'], array());
+        $rc = qruqsp_tnc_packetsDecode($ciniki, $ciniki['config']['qruqsp.tnc']['tnid'], array());
     }
 
     pcntl_waitpid($pid, $status);
@@ -70,8 +70,8 @@ else {
     //
     // Load required functions
     //
-    qruqsp_core_loadMethod($q, 'qruqsp', 'tnc', 'private', 'packetReceive');
-    qruqsp_core_loadMethod($q, 'qruqsp', 'tnc', 'private', 'packetStore');
+    ciniki_core_loadMethod($ciniki, 'qruqsp', 'tnc', 'private', 'packetReceive');
+    ciniki_core_loadMethod($ciniki, 'qruqsp', 'tnc', 'private', 'packetStore');
 
     //
     // Check the pts exists
@@ -115,7 +115,7 @@ else {
             //
             // Receive the packet
             //
-            $rc = qruqsp_tnc_packetReceive($q, $q['config']['qruqsp.tnc']['station_id'], $pts_handle, $packed_byte);
+            $rc = qruqsp_tnc_packetReceive($ciniki, $ciniki['config']['qruqsp.tnc']['tnid'], $pts_handle, $packed_byte);
             if( $rc['stat'] != 'ok' ) {
                 return $rc;
             }
@@ -123,7 +123,7 @@ else {
                 //
                 // Store the packet
                 //
-                $rc = qruqsp_tnc_packetStore($q, $q['config']['qruqsp.tnc']['station_id'], $rc['packet']);
+                $rc = qruqsp_tnc_packetStore($ciniki, $ciniki['config']['qruqsp.tnc']['tnid'], $rc['packet']);
                 if( $rc['stat'] != 'ok' ) {
                     return $rc;
                 }

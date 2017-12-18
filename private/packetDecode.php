@@ -20,7 +20,7 @@
 // q:
 // packet:              The start of the packet (0xc0).
 //
-function qruqsp_tnc_packetDecode($q, $station_id, $p) {
+function qruqsp_tnc_packetDecode($ciniki, $tnid, $p) {
     //
     // Make a copy of the packet object to compare later to see what needs to be updated
     //
@@ -156,9 +156,9 @@ function qruqsp_tnc_packetDecode($q, $station_id, $p) {
             $update_args[$f] = $pkt[$f];
         }
     }
-    qruqsp_core_loadMethod($q, 'qruqsp', 'core', 'private', 'objectUpdate');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
     if( count($update_args) > 0 ) {
-        $rc = qruqsp_core_objectUpdate($q, $station_id, 'qruqsp.tnc.kisspacket', $pkt['id'], $update_args, 0x04);
+        $rc = ciniki_core_objectUpdate($ciniki, $tnid, 'qruqsp.tnc.kisspacket', $pkt['id'], $update_args, 0x04);
         if( $rc['stat'] != 'ok' ) {
             return $rc;
         }
@@ -190,7 +190,7 @@ function qruqsp_tnc_packetDecode($q, $station_id, $p) {
                         }
                     }
                     if( count($update_args) > 0 ) {
-                        $rc = qruqsp_core_objectUpdate($q, $station_id, 'qruqsp.tnc.kisspacketaddr', $addr['id'], $update_args, 0x04);
+                        $rc = ciniki_core_objectUpdate($ciniki, $tnid, 'qruqsp.tnc.kisspacketaddr', $addr['id'], $update_args, 0x04);
                         if( $rc['stat'] != 'ok' ) {
                             return $rc;
                         }
@@ -203,8 +203,8 @@ function qruqsp_tnc_packetDecode($q, $station_id, $p) {
         // Add the address
         //
         if( $exists == 'no' ) {
-            qruqsp_core_loadMethod($q, 'qruqsp', 'core', 'private', 'objectAdd');
-            $rc = qruqsp_core_objectAdd($q, $station_id, 'qruqsp.tnc.kisspacketaddr', $addr, 0x04);
+            ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
+            $rc = ciniki_core_objectAdd($ciniki, $tnid, 'qruqsp.tnc.kisspacketaddr', $addr, 0x04);
             if( $rc['stat'] != 'ok' ) {
                 return $rc;
             }

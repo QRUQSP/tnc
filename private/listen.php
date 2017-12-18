@@ -9,13 +9,13 @@
 // q:
 // pts:         The filename of the pts device to listen on
 //
-function qruqsp_tnc_listen($q, $station_id, $pts) {
+function qruqsp_tnc_listen($ciniki, $tnid, $pts) {
     
     //
     // Load required functions
     //
-    qruqsp_core_loadMethod($q, 'qruqsp', 'tnc', 'private', 'packetReceive');
-    qruqsp_core_loadMethod($q, 'qruqsp', 'tnc', 'private', 'packetStoreProcess');
+    ciniki_core_loadMethod($ciniki, 'qruqsp', 'tnc', 'private', 'packetReceive');
+    ciniki_core_loadMethod($ciniki, 'qruqsp', 'tnc', 'private', 'packetStoreProcess');
 
     //
     // Check the pts exists
@@ -56,7 +56,7 @@ function qruqsp_tnc_listen($q, $station_id, $pts) {
         // Check if the boundary for a packet
         //
         if( $byte[1] == 0xc0 ) {
-            $rc = qruqsp_tnc_packetReceive($q, $station_id, $pts_handle, $packed_byte);
+            $rc = qruqsp_tnc_packetReceive($ciniki, $tnid, $pts_handle, $packed_byte);
             if( $rc['stat'] != 'ok' ) {
                 return $rc;
             }
@@ -69,7 +69,7 @@ function qruqsp_tnc_listen($q, $station_id, $pts) {
                     print "ERR: Unable to fork\n";
                     exit;
                 } elseif( $pid == 0 ) {
-                    $rc = qruqsp_tnc_packetStoreProcess($q, $station_id, $rc['packet']);
+                    $rc = qruqsp_tnc_packetStoreProcess($ciniki, $tnid, $rc['packet']);
                     if( $rc['stat'] != 'ok' ) {
                         print "ERR: Unable to store packet\n";
                         print_r($rc);

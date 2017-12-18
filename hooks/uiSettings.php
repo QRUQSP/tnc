@@ -7,10 +7,10 @@
 // Arguments
 // ---------
 // q:
-// station_id:
+// tnid:      
 // args: The arguments for the hook
 //
-function qruqsp_tnc_hooks_uiSettings(&$q, $station_id, $args) {
+function qruqsp_tnc_hooks_uiSettings(&$ciniki, $tnid, $args) {
     //
     // Setup the default response
     //
@@ -19,9 +19,9 @@ function qruqsp_tnc_hooks_uiSettings(&$q, $station_id, $args) {
     //
     // Check permissions for what menu items should be available
     //
-    if( isset($q['station']['modules']['qruqsp.tnc'])
+    if( isset($ciniki['tenant']['modules']['qruqsp.tnc'])
         && (isset($args['permissions']['operators'])
-            || ($q['session']['user']['perms']&0x01) == 0x01
+            || ($ciniki['session']['user']['perms']&0x01) == 0x01
             )
         ) {
         $menu_item = array(

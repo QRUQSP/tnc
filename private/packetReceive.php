@@ -10,7 +10,7 @@
 // pts_handle:          The open file handle for the pts stream
 // packet:              The start of the packet (0xc0).
 //
-function qruqsp_tnc_packetReceive($q, $station_id, $pts_handle, $packet) {
+function qruqsp_tnc_packetReceive($ciniki, $tnid, $pts_handle, $packet) {
     //
     // Read 1 byte at a time until the 0xc0 marker is found
     //

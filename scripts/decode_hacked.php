@@ -10,44 +10,44 @@
 // Initialize QRUQSP by including the qruqsp_api.php
 //
 $start_time = microtime(true);
-global $qruqsp_root;
-$qruqsp_root = dirname(__FILE__);
-if( !file_exists($qruqsp_root . '/qruqsp-api.ini') ) {
-    $qruqsp_root = dirname(dirname(dirname(dirname(__FILE__))));
+global $ciniki_root;
+$ciniki_root = dirname(__FILE__);
+if( !file_exists($ciniki_root . '/qruqsp-api.ini') ) {
+    $ciniki_root = dirname(dirname(dirname(dirname(__FILE__))));
 }
 
-require_once($qruqsp_root . '/qruqsp-mods/core/private/loadMethod.php');
-require_once($qruqsp_root . '/qruqsp-mods/core/private/init.php');
+require_once($ciniki_root . '/qruqsp-mods/core/private/loadMethod.php');
+require_once($ciniki_root . '/qruqsp-mods/core/private/init.php');
 
 //
 // Initialize Q
 //
-$rc = qruqsp_core_init($qruqsp_root, 'json');
+$rc = ciniki_core_init($ciniki_root, 'json');
 if( $rc['stat'] != 'ok' ) {
     print "ERR: Unable to initialize Q\n";
     exit;
 }
 
 //
-// Setup the $qruqsp variable to hold all things qruqsp.  
+// Setup the $ciniki variable to hold all things qruqsp.  
 //
-$q = $rc['q'];
+$ciniki = $rc['ciniki'];
 
 //
 // Check for direwolf 
 //
-if( !isset($q['config']['qruqsp.tnc']['pts']) ) {
+if( !isset($ciniki['config']['qruqsp.tnc']['pts']) ) {
     print "ERR: No TNC pts specified\n";
     exit;
 }
 
-$strsql = "SELECT station_id, status, utc_of_traffic, raw_packet "
+$strsql = "SELECT tnid, status, utc_of_traffic, raw_packet "
     . "FROM qruqsp_tnc_kisspackets "
     . "ORDER BY utc_of_traffic DESC "
     . "LIMIT 50 "
     . "";
-qruqsp_core_loadMethod($q, 'qruqsp', 'core', 'private', 'dbHashQuery');
-$rc = qruqsp_core_dbHashQuery($q, $strsql, 'qruqsp.tnc', 'item');
+ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
+$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'qruqsp.tnc', 'item');
 
 if( $rc['stat'] != 'ok' ) {
     print_r($rc);
@@ -57,9 +57,9 @@ if( $rc['stat'] != 'ok' ) {
 //   	print "\nDEBUG: text=$text\n";
 //    	$toprint = substr ($text, 20, 1);
 //    	print "\nDEBUG: toprint=$toprint\n";
-qruqsp_core_loadMethod($q, 'qruqsp', 'tnc', 'private', 'packetDecode');
+ciniki_core_loadMethod($ciniki, 'qruqsp', 'tnc', 'private', 'packetDecode');
 foreach($rc['rows'] as $row) {
-    $rc = qruqsp_tnc_packetDecode($q, $row['station_id'], $row['raw_packet']);
+    $rc = qruqsp_tnc_packetDecode($ciniki, $row['tnid'], $row['raw_packet']);
     if( $rc['stat'] != 'ok' ) {
         print_r($rc);
     } else {

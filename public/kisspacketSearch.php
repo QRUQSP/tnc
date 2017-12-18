@@ -2,23 +2,23 @@
 //
 // Description
 // -----------
-// This method searchs for a KISS TNC Packets for a station.
+// This method searchs for a KISS TNC Packets for a tenant.
 //
 // Arguments
 // ---------
 // api_key:
 // auth_token:
-// station_id:         The ID of the station to get KISS TNC Packet for.
+// tnid:               The ID of the tenant to get KISS TNC Packet for.
 // start_needle:       The search string to search for.
 // limit:              The maximum number of entries to return.
 //
-function qruqsp_tnc_kisspacketSearch($q) {
+function qruqsp_tnc_kisspacketSearch($ciniki) {
     //
     // Find all the required and optional arguments
     //
-    qruqsp_core_loadMethod($q, 'qruqsp', 'core', 'private', 'prepareArgs');
-    $rc = qruqsp_core_prepareArgs($q, 'no', array(
-        'station_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Station'),
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
+    $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'),
         'start_needle'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Search String'),
         'limit'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Limit'),
         ));
@@ -28,16 +28,16 @@ function qruqsp_tnc_kisspacketSearch($q) {
     $args = $rc['args'];
 
     //
-    // Check access to station_id as owner, or sys admin.
+    // Check access to tnid as owner, or sys admin.
     //
-    qruqsp_core_loadMethod($q, 'qruqsp', 'tnc', 'private', 'checkAccess');
-    $rc = qruqsp_tnc_checkAccess($q, $args['station_id'], 'qruqsp.tnc.kisspacketSearch');
+    ciniki_core_loadMethod($ciniki, 'qruqsp', 'tnc', 'private', 'checkAccess');
+    $rc = qruqsp_tnc_checkAccess($ciniki, $args['tnid'], 'qruqsp.tnc.kisspacketSearch');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
 
-    qruqsp_core_loadMethod($q, 'qruqsp', 'core', 'private', 'datetimeFormat');
-    $datetime_format = qruqsp_core_datetimeFormat($q, 'php');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'datetimeFormat');
+    $datetime_format = ciniki_users_datetimeFormat($ciniki, 'php');
 
     //
     // Get the list of packets
@@ -58,18 +58,18 @@ function qruqsp_tnc_kisspacketSearch($q) {
         . "FROM qruqsp_tnc_kisspackets AS p "
 //        . "LEFT JOIN qruqsp_tnc_kisspacket_addrs AS a ON ("
 //            . "p.id = a.packet_id "
-//            . "AND a.station_id = '" . qruqsp_core_dbQuote($q, $args['station_id']) . "' "
+//            . "AND a.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
 //            . ") "
-        . "WHERE p.station_id = '" . qruqsp_core_dbQuote($q, $args['station_id']) . "' "
+        . "WHERE p.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND ("
-            . "p.data LIKE '%" . qruqsp_core_dbQuote($q, $args['start_needle']) . "%' "
-            . "OR p.addresses LIKE '%" . qruqsp_core_dbQuote($q, $args['start_needle']) . "%' "
+            . "p.data LIKE '%" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
+            . "OR p.addresses LIKE '%" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
         . ") "
         . "ORDER BY p.utc_of_traffic DESC "
         . "LIMIT 250 "
         . "";
-    qruqsp_core_loadMethod($q, 'qruqsp', 'core', 'private', 'dbHashQueryArrayTree');
-    $rc = qruqsp_core_dbHashQueryArrayTree($q, $strsql, 'qruqsp.tnc', array(
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
+    $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'qruqsp.tnc', array(
         array('container'=>'packets', 'fname'=>'id', 
             'fields'=>array('id', 'status', 'utc_of_traffic', 'port', 'command', 'control', 'protocol', 'data', 'addresses'),
 //            'dlists'=>array('addresses'=>' > '),
@@ -85,18 +85,18 @@ function qruqsp_tnc_kisspacketSearch($q) {
         . "qruqsp_tnc_kisspackets.protocol, "
         . "qruqsp_tnc_kisspackets.data "
         . "FROM qruqsp_tnc_kisspackets "
-        . "WHERE qruqsp_tnc_kisspackets.station_id = '" . qruqsp_core_dbQuote($q, $args['station_id']) . "' "
+        . "WHERE qruqsp_tnc_kisspackets.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND ("
-            . "data LIKE '%" . qruqsp_core_dbQuote($q, $args['start_needle']) . "%' "
+            . "data LIKE '%" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
         . ") "
         . "";
     if( isset($args['limit']) && is_numeric($args['limit']) && $args['limit'] > 0 ) {
-        $strsql .= "LIMIT " . qruqsp_core_dbQuote($q, $args['limit']) . " ";
+        $strsql .= "LIMIT " . ciniki_core_dbQuote($ciniki, $args['limit']) . " ";
     } else {
         $strsql .= "LIMIT 25 ";
     } 
-    qruqsp_core_loadMethod($q, 'qruqsp', 'core', 'private', 'dbHashQueryArrayTree');
-    $rc = qruqsp_core_dbHashQueryArrayTree($q, $strsql, 'qruqsp.tnc', array(
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
+    $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'qruqsp.tnc', array(
         array('container'=>'packets', 'fname'=>'id', 
             'fields'=>array('id', 'status', 'utc_of_traffic', 'port', 'command', 'control', 'protocol', 'data')),
         )); */

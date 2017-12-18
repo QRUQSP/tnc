@@ -8,16 +8,16 @@
 // ---------
 // api_key:
 // auth_token:
-// station_id:         The ID of the station the kiss tnc packet is attached to.
+// tnid:               The ID of the tenant the kiss tnc packet is attached to.
 // kisspacket_id:          The ID of the kiss tnc packet to get the details for.
 //
-function qruqsp_tnc_kisspacketGet($q) {
+function qruqsp_tnc_kisspacketGet($ciniki) {
     //
     // Find all the required and optional arguments
     //
-    qruqsp_core_loadMethod($q, 'qruqsp', 'core', 'private', 'prepareArgs');
-    $rc = qruqsp_core_prepareArgs($q, 'no', array(
-        'station_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Station'),
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
+    $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'),
         'kisspacket_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'KISS TNC Packet'),
         ));
     if( $rc['stat'] != 'ok' ) {
@@ -27,19 +27,19 @@ function qruqsp_tnc_kisspacketGet($q) {
 
     //
     // Make sure this module is activated, and
-    // check permission to run this function for this station
+    // check permission to run this function for this tenant
     //
-    qruqsp_core_loadMethod($q, 'qruqsp', 'tnc', 'private', 'checkAccess');
-    $rc = qruqsp_tnc_checkAccess($q, $args['station_id'], 'qruqsp.tnc.kisspacketGet');
+    ciniki_core_loadMethod($ciniki, 'qruqsp', 'tnc', 'private', 'checkAccess');
+    $rc = qruqsp_tnc_checkAccess($ciniki, $args['tnid'], 'qruqsp.tnc.kisspacketGet');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
 
     //
-    // Load station settings
+    // Load tenant settings
     //
-    qruqsp_core_loadMethod($q, 'qruqsp', 'core', 'private', 'intlSettings');
-    $rc = qruqsp_core_intlSettings($q, $args['station_id']);
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'intlSettings');
+    $rc = ciniki_tenants_intlSettings($ciniki, $args['tnid']);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -47,8 +47,8 @@ function qruqsp_tnc_kisspacketGet($q) {
     $intl_currency_fmt = numfmt_create($rc['settings']['intl-default-locale'], NumberFormatter::CURRENCY);
     $intl_currency = $rc['settings']['intl-default-currency'];
 
-    qruqsp_core_loadMethod($q, 'qruqsp', 'core', 'private', 'dateFormat');
-    $date_format = qruqsp_core_dateFormat($q, 'php');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'dateFormat');
+    $date_format = ciniki_users_dateFormat($ciniki, 'php');
 
     //
     // Return default for new KISS TNC Packet
@@ -78,11 +78,11 @@ function qruqsp_tnc_kisspacketGet($q) {
             . "qruqsp_tnc_kisspackets.control, "
             . "qruqsp_tnc_kisspackets.protocol "
             . "FROM qruqsp_tnc_kisspackets "
-            . "WHERE qruqsp_tnc_kisspackets.station_id = '" . qruqsp_core_dbQuote($q, $args['station_id']) . "' "
-            . "AND qruqsp_tnc_kisspackets.id = '" . qruqsp_core_dbQuote($q, $args['kisspacket_id']) . "' "
+            . "WHERE qruqsp_tnc_kisspackets.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+            . "AND qruqsp_tnc_kisspackets.id = '" . ciniki_core_dbQuote($ciniki, $args['kisspacket_id']) . "' "
             . "";
-        qruqsp_core_loadMethod($q, 'qruqsp', 'core', 'private', 'dbHashQueryArrayTree');
-        $rc = qruqsp_core_dbHashQueryArrayTree($q, $strsql, 'qruqsp.tnc', array(
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
+        $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'qruqsp.tnc', array(
             array('container'=>'packets', 'fname'=>'id', 
                 'fields'=>array('status', 'utc_of_traffic', 'port', 'command', 'control', 'protocol'),
                 ),

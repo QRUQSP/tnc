@@ -7,15 +7,15 @@
 // Arguments
 // ---------
 // q:
-// station_id:                  The ID of the station to check the session user against.
+// tnid:                        The ID of the tenant to check the session user against.
 // method:                      The requested method.
 //
-function qruqsp_tnc_checkAccess(&$q, $station_id, $method) {
+function qruqsp_tnc_checkAccess(&$ciniki, $tnid, $method) {
     //
-    // Check if the station is active and the module is enabled
+    // Check if the tenant is active and the module is enabled
     //
-    qruqsp_core_loadMethod($q, 'qruqsp', 'core', 'private', 'checkModuleAccess');
-    $rc = qruqsp_core_checkModuleAccess($q, $station_id, array('package'=>'qruqsp', 'module'=>'tnc'));
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'checkModuleAccess');
+    $rc = ciniki_tenants_checkModuleAccess($ciniki, $tnid, 'qruqsp', 'tnc');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -23,22 +23,22 @@ function qruqsp_tnc_checkAccess(&$q, $station_id, $method) {
     //
     // Sysadmins are allowed full access
     //
-    if( ($q['session']['user']['perms'] & 0x01) == 0x01 ) {
+    if( ($ciniki['session']['user']['perms'] & 0x01) == 0x01 ) {
         return array('stat'=>'ok');
     }
 
     //
-    // Check to makes sure the session user is a station operator
+    // Check to makes sure the session user is a tenant operator
     //
-    $strsql = "SELECT station_id, user_id "
-        . "FROM qruqsp_core_station_users "
-        . "WHERE station_id = '" . qruqsp_core_dbQuote($q, $station_id) . "' "
-        . "AND user_id = '" . qruqsp_core_dbQuote($q, $q['session']['user']['id']) . "' "
+    $strsql = "SELECT tnid, user_id "
+        . "FROM ciniki_users "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
+        . "AND user_id = '" . ciniki_core_dbQuote($ciniki, $ciniki['session']['user']['id']) . "' "
         . "AND status = 10 "
         . "AND permission_group = 'operators' "
         . "";
-    qruqsp_core_loadMethod($q, 'qruqsp', 'core', 'private', 'dbHashQuery');
-    $rc = qruqsp_core_dbHashQuery($q, $strsql, 'qruqsp.core', 'user');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
+    $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.core', 'user');
     if( $rc['stat'] != 'ok' ) {
         return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.1', 'msg'=>'Access denied.'));
     }
@@ -46,7 +46,7 @@ function qruqsp_tnc_checkAccess(&$q, $station_id, $method) {
     // If the user has permission, return ok
     //
     if( isset($rc['rows']) && isset($rc['rows'][0])
-        && $rc['rows'][0]['user_id'] > 0 && $rc['rows'][0]['user_id'] == $q['session']['user']['id'] ) {
+        && $rc['rows'][0]['user_id'] > 0 && $rc['rows'][0]['user_id'] == $ciniki['session']['user']['id'] ) {
         return array('stat'=>'ok');
     }
 

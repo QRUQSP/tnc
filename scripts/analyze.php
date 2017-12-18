@@ -10,19 +10,19 @@
 // Initialize QRUQSP by including the qruqsp_api.php
 //
 $start_time = microtime(true);
-global $qruqsp_root;
-$qruqsp_root = dirname(__FILE__);
-if( !file_exists($qruqsp_root . '/qruqsp-api.ini') ) {
-    $qruqsp_root = dirname(dirname(dirname(dirname(__FILE__))));
+global $ciniki_root;
+$ciniki_root = dirname(__FILE__);
+if( !file_exists($ciniki_root . '/qruqsp-api.ini') ) {
+    $ciniki_root = dirname(dirname(dirname(dirname(__FILE__))));
 }
 
-require_once($qruqsp_root . '/qruqsp-mods/core/private/loadMethod.php');
-require_once($qruqsp_root . '/qruqsp-mods/core/private/init.php');
+require_once($ciniki_root . '/qruqsp-mods/core/private/loadMethod.php');
+require_once($ciniki_root . '/qruqsp-mods/core/private/init.php');
 
 //
 // Initialize Q
 //
-$rc = qruqsp_core_init($qruqsp_root, 'json');
+$rc = qruqsp_core_init($ciniki_root, 'json');
 if( $rc['stat'] != 'ok' ) {
     print "ERR: Unable to initialize Q\n";
     exit;
@@ -34,14 +34,14 @@ if( isset($argv[1]) && $argv[1] != '' ) {
 }
 
 //
-// Setup the $qruqsp variable to hold all things qruqsp.  
+// Setup the $ciniki variable to hold all things qruqsp.  
 //
-$q = $rc['q'];
+$ciniki = $rc['ciniki'];
 $strsql = "SELECT COUNT(*) AS numpackets FROM qruqsp_tnc_kisspackets "
     . ($shriek != '' ? "WHERE data LIKE '%$shriek%' " : '');
 
-qruqsp_core_loadMethod($q, 'qruqsp', 'core', 'private', 'dbHashQueryArrayTree');
-$rc = qruqsp_core_dbHashQueryArrayTree($q, $strsql, 'qruqsp.tnc', array(
+qruqsp_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
+$rc = qruqsp_core_dbHashQueryArrayTree($ciniki, $strsql, 'qruqsp.tnc', array(
     array('container'=>'count', 'fname'=>'numpackets', 
         'fields'=>array('numpackets')),
     ));
@@ -66,8 +66,8 @@ $strsql = "SELECT a.callsign, a.ssid, COUNT(a.packet_id) AS numpackets "
     . "ORDER BY numpackets DESC "
     . "";
 
-qruqsp_core_loadMethod($q, 'qruqsp', 'core', 'private', 'dbHashQueryArrayTree');
-$rc = qruqsp_core_dbHashQueryArrayTree($q, $strsql, 'qruqsp.tnc', array(
+qruqsp_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
+$rc = qruqsp_core_dbHashQueryArrayTree($ciniki, $strsql, 'qruqsp.tnc', array(
     array('container'=>'callsigns', 'fname'=>'callsign', 
         'fields'=>array('callsign', 'ssid', 'numpackets')),
     ));
@@ -98,8 +98,8 @@ $strsql = "SELECT p.id, p.data, a.callsign, a.ssid "
   . "AND a.atype = 20 "
   . "";
 
-qruqsp_core_loadMethod($q, 'qruqsp', 'core', 'private', 'dbHashQueryArrayTree');
-$rc = qruqsp_core_dbHashQueryArrayTree($q, $strsql, 'qruqsp.tnc', array(
+qruqsp_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
+$rc = qruqsp_core_dbHashQueryArrayTree($ciniki, $strsql, 'qruqsp.tnc', array(
     array('container'=>'packets', 'fname'=>'id', 'fields'=>array('id', 'data', 'callsign', 'ssid'))
     ));
 // print_r($rc);

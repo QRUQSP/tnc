@@ -10,17 +10,17 @@
 // ---------
 // api_key:
 // auth_token:
-// station_id:         The ID of the station to get the details for.
+// tnid:               The ID of the tenant to get the details for.
 // kisspacket_id:          The ID of the kiss tnc packet to get the history for.
 // field:                   The field to get the history for.
 //
-function qruqsp_tnc_kisspacketHistory($q) {
+function qruqsp_tnc_kisspacketHistory($ciniki) {
     //
     // Find all the required and optional arguments
     //
-    qruqsp_core_loadMethod($q, 'qruqsp', 'core', 'private', 'prepareArgs');
-    $rc = qruqsp_core_prepareArgs($q, 'no', array(
-        'station_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Station'),
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
+    $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'),
         'kisspacket_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'KISS TNC Packet'),
         'field'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'field'),
         ));
@@ -30,15 +30,15 @@ function qruqsp_tnc_kisspacketHistory($q) {
     $args = $rc['args'];
 
     //
-    // Check access to station_id as owner, or sys admin
+    // Check access to tnid as owner, or sys admin
     //
-    qruqsp_core_loadMethod($q, 'qruqsp', 'tnc', 'private', 'checkAccess');
-    $rc = qruqsp_tnc_checkAccess($q, $args['station_id'], 'qruqsp.tnc.kisspacketHistory');
+    ciniki_core_loadMethod($ciniki, 'qruqsp', 'tnc', 'private', 'checkAccess');
+    $rc = qruqsp_tnc_checkAccess($ciniki, $args['tnid'], 'qruqsp.tnc.kisspacketHistory');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
 
-    qruqsp_core_loadMethod($q, 'qruqsp', 'core', 'private', 'dbGetModuleHistory');
-    return qruqsp_core_dbGetModuleHistory($q, 'qruqsp.tnc', 'qruqsp_tnc_history', $args['station_id'], 'qruqsp_tnc_kisspackets', $args['kisspacket_id'], $args['field']);
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbGetModuleHistory');
+    return ciniki_core_dbGetModuleHistory($ciniki, 'qruqsp.tnc', 'qruqsp_tnc_history', $args['tnid'], 'qruqsp_tnc_kisspackets', $args['kisspacket_id'], $args['field']);
 }
 ?>

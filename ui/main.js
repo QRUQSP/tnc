@@ -5,7 +5,7 @@ function qruqsp_tnc_main() {
     //
     // The panel to list the kisspacket
     //
-    this.menu = new Q.panel('kisspacket', 'qruqsp_tnc_main', 'menu', 'mc', 'large narrowaside', 'sectioned', 'qruqsp.tnc.main.menu');
+    this.menu = new M.panel('kisspacket', 'qruqsp_tnc_main', 'menu', 'mc', 'large narrowaside', 'sectioned', 'qruqsp.tnc.main.menu');
     this.menu.data = {};
     this.menu.nplist = [];
     this.menu.sections = {
@@ -37,13 +37,13 @@ function qruqsp_tnc_main() {
             'cellClasses':['multiline'],
             'noData':'No kisspacket',
             'addTxt':'Add KISS TNC Packet',
-            'addFn':'Q.qruqsp_tnc_main.packet.open(\'Q.qruqsp_tnc_main.menu.open();\',0,null);'
+            'addFn':'M.qruqsp_tnc_main.packet.open(\'M.qruqsp_tnc_main.menu.open();\',0,null);'
             },
     }
     this.menu.liveSearchCb = function(s, i, v) {
         if( s == 'search' && v != '' ) {
-            Q.api.getJSONBgCb('qruqsp.tnc.kisspacketSearch', {'station_id':Q.curStationID, 'start_needle':v, 'limit':'25'}, function(rsp) {
-                Q.qruqsp_tnc_main.menu.liveSearchShow('search',null,Q.gE(Q.qruqsp_tnc_main.menu.panelUID + '_' + s), rsp.packets);
+            M.api.getJSONBgCb('qruqsp.tnc.kisspacketSearch', {'tnid':M.curTenantID, 'start_needle':v, 'limit':'25'}, function(rsp) {
+                M.qruqsp_tnc_main.menu.liveSearchShow('search',null,M.gE(M.qruqsp_tnc_main.menu.panelUID + '_' + s), rsp.packets);
                 });
         }
     }
@@ -51,7 +51,7 @@ function qruqsp_tnc_main() {
         return '<span class="maintext">' + d.utc_of_traffic + ' <span class="subdue">' + d.addresses + '</span></span><span class="subsubtext">' + d.data + '</span>';
     }
     this.menu.liveSearchResultRowFn = function(s, f, i, j, d) {
-        return 'Q.qruqsp_tnc_main.packet.open(\'Q.qruqsp_tnc_main.menu.open();\',\'' + d.id + '\');';
+        return 'M.qruqsp_tnc_main.packet.open(\'M.qruqsp_tnc_main.menu.open();\',\'' + d.id + '\');';
     }
     this.menu.cellValue = function(s, i, j, d) {
         if( s == 'stats' ) {
@@ -81,16 +81,16 @@ function qruqsp_tnc_main() {
     }
     this.menu.rowFn = function(s, i, d) {
         if( s == 'packets' ) {
-            return 'Q.qruqsp_tnc_main.packet.open(\'Q.qruqsp_tnc_main.menu.open();\',\'' + d.id + '\',Q.qruqsp_tnc_main.packet.nplist);';
+            return 'M.qruqsp_tnc_main.packet.open(\'M.qruqsp_tnc_main.menu.open();\',\'' + d.id + '\',M.qruqsp_tnc_main.packet.nplist);';
         }
     }
     this.menu.open = function(cb) {
-        Q.api.getJSONCb('qruqsp.tnc.kisspacketList', {'station_id':Q.curStationID}, function(rsp) {
+        M.api.getJSONCb('qruqsp.tnc.kisspacketList', {'tnid':M.curTenantID}, function(rsp) {
             if( rsp.stat != 'ok' ) {
-                Q.api.err(rsp);
+                M.api.err(rsp);
                 return false;
             }
-            var p = Q.qruqsp_tnc_main.menu;
+            var p = M.qruqsp_tnc_main.menu;
             p.data = rsp;
             p.nplist = (rsp.nplist != null ? rsp.nplist : null);
             p.refresh();
@@ -102,7 +102,7 @@ function qruqsp_tnc_main() {
     //
     // The panel to edit KISS TNC Packet
     //
-    this.packet = new Q.panel('KISS TNC Packet', 'qruqsp_tnc_main', 'packet', 'mc', 'medium', 'sectioned', 'qruqsp.tnc.main.packet');
+    this.packet = new M.panel('KISS TNC Packet', 'qruqsp_tnc_main', 'packet', 'mc', 'medium', 'sectioned', 'qruqsp.tnc.main.packet');
     this.packet.data = null;
     this.packet.kisspacket_id = 0;
     this.packet.nplist = [];
@@ -116,39 +116,39 @@ function qruqsp_tnc_main() {
             'protocol':{'label':'Command', 'type':'text'},
             }},
         '_buttons':{'label':'', 'buttons':{
-            'save':{'label':'Save', 'fn':'Q.qruqsp_tnc_main.packet.save();'},
+            'save':{'label':'Save', 'fn':'M.qruqsp_tnc_main.packet.save();'},
             'delete':{'label':'Delete', 
-                'visible':function() {return Q.qruqsp_tnc_main.packet.kisspacket_id > 0 ? 'yes' : 'no'; },
-                'fn':'Q.qruqsp_tnc_main.packet.remove();'},
+                'visible':function() {return M.qruqsp_tnc_main.packet.kisspacket_id > 0 ? 'yes' : 'no'; },
+                'fn':'M.qruqsp_tnc_main.packet.remove();'},
             }},
         };
     this.packet.fieldValue = function(s, i, d) { return this.data[i]; }
     this.packet.fieldHistoryArgs = function(s, i) {
-        return {'method':'qruqsp.tnc.kisspacketHistory', 'args':{'station_id':Q.curStationID, 'kisspacket_id':this.kisspacket_id, 'field':i}};
+        return {'method':'qruqsp.tnc.kisspacketHistory', 'args':{'tnid':M.curTenantID, 'kisspacket_id':this.kisspacket_id, 'field':i}};
     }
     this.packet.open = function(cb, kid, list) {
         if( kid != null ) { this.kisspacket_id = kid; }
         if( list != null ) { this.nplist = list; }
-        Q.api.getJSONCb('qruqsp.tnc.kisspacketGet', {'station_id':Q.curStationID, 'kisspacket_id':this.kisspacket_id}, function(rsp) {
+        M.api.getJSONCb('qruqsp.tnc.kisspacketGet', {'tnid':M.curTenantID, 'kisspacket_id':this.kisspacket_id}, function(rsp) {
             if( rsp.stat != 'ok' ) {
-                Q.api.err(rsp);
+                M.api.err(rsp);
                 return false;
             }
-            var p = Q.qruqsp_tnc_main.packet;
+            var p = M.qruqsp_tnc_main.packet;
             p.data = rsp.packet;
             p.refresh();
             p.show(cb);
         });
     }
     this.packet.save = function(cb) {
-        if( cb == null ) { cb = 'Q.qruqsp_tnc_main.packet.close();'; }
+        if( cb == null ) { cb = 'M.qruqsp_tnc_main.packet.close();'; }
         if( !this.checkForm() ) { return false; }
         if( this.kisspacket_id > 0 ) {
             var c = this.serializeForm('no');
             if( c != '' ) {
-                Q.api.postJSONCb('qruqsp.tnc.kisspacketUpdate', {'station_id':Q.curStationID, 'kisspacket_id':this.kisspacket_id}, c, function(rsp) {
+                M.api.postJSONCb('qruqsp.tnc.kisspacketUpdate', {'tnid':M.curTenantID, 'kisspacket_id':this.kisspacket_id}, c, function(rsp) {
                     if( rsp.stat != 'ok' ) {
-                        Q.api.err(rsp);
+                        M.api.err(rsp);
                         return false;
                     }
                     eval(cb);
@@ -158,40 +158,40 @@ function qruqsp_tnc_main() {
             }
         } else {
             var c = this.serializeForm('yes');
-            Q.api.postJSONCb('qruqsp.tnc.kisspacketAdd', {'station_id':Q.curStationID}, c, function(rsp) {
+            M.api.postJSONCb('qruqsp.tnc.kisspacketAdd', {'tnid':M.curTenantID}, c, function(rsp) {
                 if( rsp.stat != 'ok' ) {
-                    Q.api.err(rsp);
+                    M.api.err(rsp);
                     return false;
                 }
-                Q.qruqsp_tnc_main.packet.kisspacket_id = rsp.id;
+                M.qruqsp_tnc_main.packet.kisspacket_id = rsp.id;
                 eval(cb);
             });
         }
     }
     this.packet.remove = function() {
         if( confirm('Are you sure you want to remove kisspacket?') ) {
-            Q.api.getJSONCb('qruqsp.tnc.kisspacketDelete', {'station_id':Q.curStationID, 'kisspacket_id':this.kisspacket_id}, function(rsp) {
+            M.api.getJSONCb('qruqsp.tnc.kisspacketDelete', {'tnid':M.curTenantID, 'kisspacket_id':this.kisspacket_id}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
-                    Q.api.err(rsp);
+                    M.api.err(rsp);
                     return false;
                 }
-                Q.qruqsp_tnc_main.packet.close();
+                M.qruqsp_tnc_main.packet.close();
             });
         }
     }
     this.packet.nextButtonFn = function() {
         if( this.nplist != null && this.nplist.indexOf('' + this.kisspacket_id) < (this.nplist.length - 1) ) {
-            return 'Q.qruqsp_tnc_main.packet.save(\'Q.qruqsp_tnc_main.packet.open(null,' + this.nplist[this.nplist.indexOf('' + this.kisspacket_id) + 1] + ');\');';
+            return 'M.qruqsp_tnc_main.packet.save(\'M.qruqsp_tnc_main.packet.open(null,' + this.nplist[this.nplist.indexOf('' + this.kisspacket_id) + 1] + ');\');';
         }
         return null;
     }
     this.packet.prevButtonFn = function() {
         if( this.nplist != null && this.nplist.indexOf('' + this.kisspacket_id) > 0 ) {
-            return 'Q.qruqsp_tnc_main.packet.save(\'Q.qruqsp_tnc_main.packet.open(null,' + this.nplist[this.nplist.indexOf('' + this.kisspacket_id) - 1] + ');\');';
+            return 'M.qruqsp_tnc_main.packet.save(\'M.qruqsp_tnc_main.packet.open(null,' + this.nplist[this.nplist.indexOf('' + this.kisspacket_id) - 1] + ');\');';
         }
         return null;
     }
-    this.packet.addButton('save', 'Save', 'Q.qruqsp_tnc_main.packet.save();');
+    this.packet.addButton('save', 'Save', 'M.qruqsp_tnc_main.packet.save();');
     this.packet.addClose('Cancel');
     this.packet.addButton('next', 'Next');
     this.packet.addLeftButton('prev', 'Prev');
@@ -211,7 +211,7 @@ function qruqsp_tnc_main() {
         //
         // Create the app container
         //
-        var ac = Q.createContainer(ap, 'qruqsp_tnc_main', 'yes');
+        var ac = M.createContainer(ap, 'qruqsp_tnc_main', 'yes');
         if( ac == null ) {
             alert('App Error');
             return false;
