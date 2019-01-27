@@ -212,8 +212,22 @@ function qruqsp_tnc_packetDecode($ciniki, $tnid, $p) {
     }
 
     //
-    // FIXME: Check for hooks to receive packet
+    // Check for hooks to receive packet
     //
+    error_log('check for modules');
+    foreach($ciniki['tenant']['modules'] as $module => $m) {
+        error_log($module);
+        list($pkg, $mod) = explode('.', $module);
+        $rc = ciniki_core_loadMethod($ciniki, $pkg, $mod, 'hooks', 'packetReceived');
+        if( $rc['stat'] == 'ok' ) {
+            $fn = $rc['function_call'];
+            $rc = $fn($ciniki, $tnid, array('packet' => $pkt));
+            if( $rc['stat'] != 'ok' ) {
+                return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.7', 'msg'=>'Error processing packet', 'err'=>$rc['err']));
+            }
+
+        }
+    }
 
     return array('stat'=>'ok', 'packet'=>$pkt);
 }

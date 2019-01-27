@@ -47,6 +47,43 @@ if( !isset($ciniki['config']['qruqsp.tnc']['pts']) ) {
 $pts = $ciniki['config']['qruqsp.tnc']['pts'];
 
 //
+// Determine which tnid to use
+//
+$tnid = $ciniki['config']['ciniki.core']['master_tnid'];
+if( isset($ciniki['config']['qruqsp.tnc']['tnid']) ) {
+    $tnid = $ciniki['config']['qruqsp.tnc']['tnid'];
+}
+
+ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuote');
+ciniki_core_loadMethod($ciniki, 'ciniki', 'cron', 'private', 'logMsg');
+
+//
+// Load tenant modules
+//
+$strsql = "SELECT ciniki_tenants.status AS tenant_status, "
+    . "ciniki_tenant_modules.status AS module_status, "
+    . "ciniki_tenant_modules.package, ciniki_tenant_modules.module, "
+    . "CONCAT_WS('.', ciniki_tenant_modules.package, ciniki_tenant_modules.module) AS module_id, "
+    . "ciniki_tenant_modules.flags, "
+    . "(ciniki_tenant_modules.flags&0xFFFFFFFF00000000)>>32 as flags2, "
+    . "ciniki_tenant_modules.ruleset "
+    . "FROM ciniki_tenants, ciniki_tenant_modules "
+    . "WHERE ciniki_tenants.id = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
+    . "AND ciniki_tenants.id = ciniki_tenant_modules.tnid "
+    // Get the options and mandatory module
+    . "AND (ciniki_tenant_modules.status = 1 || ciniki_tenant_modules.status = 2 || ciniki_tenant_modules.status = 90) "
+    . "";
+ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashIDQuery');
+$rc = ciniki_core_dbHashIDQuery($ciniki, $strsql, 'ciniki.tenants', 'modules', 'module_id');
+if( $rc['stat'] != 'ok' ) {
+    return $rc;
+}
+if( !isset($rc['modules']) ) {
+    return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.tenants.15', 'msg'=>'No modules enabled'));
+}
+$ciniki['tenant']['modules'] = $rc['modules'];
+
+//
 // Parent process
 //
 if( $pid > 0 ) {
@@ -57,7 +94,7 @@ if( $pid > 0 ) {
 
     pcntl_sigprocmask(SIG_BLOCK, array(SIGUSR1));
     while( $signo = pcntl_sigwaitinfo(array(SIGUSR1)) ) {
-        $rc = qruqsp_tnc_packetsDecode($ciniki, $ciniki['config']['qruqsp.tnc']['tnid'], array());
+        $rc = qruqsp_tnc_packetsDecode($ciniki, $tnid, array());
     }
 
     pcntl_waitpid($pid, $status);
@@ -115,7 +152,7 @@ else {
             //
             // Receive the packet
             //
-            $rc = qruqsp_tnc_packetReceive($ciniki, $ciniki['config']['qruqsp.tnc']['tnid'], $pts_handle, $packed_byte);
+            $rc = qruqsp_tnc_packetReceive($ciniki, $tnid, $pts_handle, $packed_byte);
             if( $rc['stat'] != 'ok' ) {
                 return $rc;
             }
@@ -123,7 +160,7 @@ else {
                 //
                 // Store the packet
                 //
-                $rc = qruqsp_tnc_packetStore($ciniki, $ciniki['config']['qruqsp.tnc']['tnid'], $rc['packet']);
+                $rc = qruqsp_tnc_packetStore($ciniki, $tnid, $rc['packet']);
                 if( $rc['stat'] != 'ok' ) {
                     return $rc;
                 }

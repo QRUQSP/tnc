@@ -46,7 +46,7 @@ function qruqsp_tnc_packetsDecode($ciniki, $tnid, $args) {
             'fields'=>array('id'=>'addr_id', 'packet_id', 'atype', 'sequence', 'flags', 'callsign', 'ssid')),
         ));
     if( $rc['stat'] != 'ok' ) {
-        print_r($rc);
+        return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.8', 'msg'=>'Unable to check for undecoded packets', 'err'=>$rc['err']));
     }
     $packets = $rc['packets'];
 
