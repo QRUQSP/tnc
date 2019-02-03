@@ -17,11 +17,11 @@ function qruqsp_tnc_hooks_messageSend(&$ciniki, $tnid, $args) {
     //
     // Check for required args
     //
-    if( !isset($args['from_callsign']) || $args['from_callsign'] == '' ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.3', 'msg'=>'No from callsign'));
+    if( !isset($args['source_callsign']) || $args['source_callsign'] == '' ) {
+        return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.3', 'msg'=>'No source callsign'));
     }
-    if( !isset($args['to_callsign']) || $args['to_callsign'] == '' ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.4', 'msg'=>'No to callsign'));
+    if( !isset($args['destination_callsign']) || $args['destination_callsign'] == '' ) {
+        return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.4', 'msg'=>'No destination callsign'));
     }
     if( !isset($args['content']) || $args['content'] == '' ) {
         return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.5', 'msg'=>'No content'));
@@ -37,11 +37,11 @@ function qruqsp_tnc_hooks_messageSend(&$ciniki, $tnid, $args) {
     //
     // Make sure callsigns are uppercase
     //
-    $args['to_callsign'] = strtoupper($args['to_callsign']);
-    if( !isset($args['next_callsign']) || $args['next_callsign'] == '' ) {
-        $args['next_callsign'] = strtoupper($args['to_callsign']);
-    }
-    $args['from_callsign'] = strtoupper($args['from_callsign']);
+    $args['destination_callsign'] = strtoupper($args['destination_callsign']);
+//    if( !isset($args['next_callsign']) || $args['next_callsign'] == '' ) {
+//        $args['next_callsign'] = strtoupper($args['destination_callsign']);
+//    }
+    $args['source_callsign'] = strtoupper($args['source_callsign']);
 
     $str = '';
 
@@ -50,43 +50,40 @@ function qruqsp_tnc_hooks_messageSend(&$ciniki, $tnid, $args) {
     //
     $str .= pack('C*', 0xC0, 0x00);
 
-    //
-    // Parse the callsign of the next callsign to send to
-    //
-    list($callsign, $ssid) = explode('-', $args['next_callsign'] . '-');
-    for($i = 0; $i < 6; $i++) {
-        if( $i < strlen($callsign) ) {
-            $str .= pack('C', ord($callsign[$i])<<1);
-        } else {
-            $str .= pack('C', ord(' ')<<1);
-        }
-    }
-    if( isset($ssid) && $ssid != '' ) {
-        $ssid = intval($ssid);
-        $str .= pack('C', ($ssid&0x0f)<<1);
+    if( isset($args['path']) ) {
+        $addrs = explode(',', $args['path']);
     } else {
-        $str .= pack('C', 0x00);
+        $addrs = array();
     }
+    array_unshift($addrs, $args['destination_callsign'], $args['source_callsign']);
+
     //
-    // Parse the from callsign
+    // setup the packet callsigns: destination, source, digipeaters
     //
-    list($callsign, $ssid) = explode('-', $args['from_callsign'] . '-');
-    for($i = 0; $i < 6; $i++) {
-        if( $i < strlen($callsign) ) {
-            $str .= pack('C', ord($callsign[$i])<<1);
-        } else {
-            $str .= pack('C', ord(' ')<<1);
+    $c = 1;
+    foreach($addrs as $addr) {
+        list($callsign, $ssid) = explode('-', $addr . '-');
+        for($i = 0; $i < 6; $i++) {
+            if( $i < strlen($callsign) ) {
+                $str .= pack('C', ord($callsign[$i])<<1);
+            } else {
+                $str .= pack('C', ord(' ')<<1);
+            }
         }
+        $end_bit = 0x00;
+        if( $c == count($addrs) ) {
+            $end_bit = 0x01;
+        }
+        if( isset($ssid) && $ssid != '' ) {
+            $ssid = intval($ssid);
+            $str .= pack('C', ((($ssid&0x0f)<<1)|$end_bit));
+        } else {
+            $str .= pack('C', $end_bit);
+        }
+
+        $c++;
     }
-    if( isset($ssid) && $ssid != '' ) {
-        $ssid = intval($ssid);
-        // Add 0x01 to signal the end of the callsigns
-        // FIXME: Remove 0x01 when digipeater addresses are included
-        $str .= pack('C', ((($ssid&0x0f)<<1)|0x01) );
-    } else {
-        $str .= pack('C', 0x01);
-    }
-    
+
     //
     // Add the control field and protocol
     //
@@ -95,7 +92,7 @@ function qruqsp_tnc_hooks_messageSend(&$ciniki, $tnid, $args) {
     //
     // Setup message in APRS format
     //
-    $message = sprintf(":%-9s:%s", $args['to_callsign'], $args['content']);
+    $message = sprintf(":%-9s:%s", $args['destination_callsign'], $args['content']);
     $str .= pack('a*', $message);
 
     //
@@ -128,7 +125,6 @@ function qruqsp_tnc_hooks_messageSend(&$ciniki, $tnid, $args) {
         return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.sams.16', 'msg'=>'Unable to write to tnc'));
     }
     fclose($pts_handle);
-
 
     return array('stat'=>'ok');
 }
