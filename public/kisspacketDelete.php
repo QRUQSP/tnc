@@ -47,7 +47,7 @@ function qruqsp_tnc_kisspacketDelete(&$ciniki) {
         return $rc;
     }
     if( !isset($rc['packet']) ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.100', 'msg'=>'KISS TNC Packet does not exist.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.11', 'msg'=>'KISS TNC Packet does not exist.'));
     }
     $packet = $rc['packet'];
 
@@ -61,10 +61,10 @@ function qruqsp_tnc_kisspacketDelete(&$ciniki) {
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectCheckUsed');
     $rc = ciniki_core_objectCheckUsed($ciniki, $args['tnid'], 'qruqsp.tnc.kisspacket', $args['kisspacket_id']);
     if( $rc['stat'] != 'ok' ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.101', 'msg'=>'Unable to check if the kiss tnc packet is still being used.', 'err'=>$rc['err']));
+        return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.12', 'msg'=>'Unable to check if the kiss tnc packet is still being used.', 'err'=>$rc['err']));
     }
     if( $rc['used'] != 'no' ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.102', 'msg'=>'The kiss tnc packet is still in use. ' . $rc['msg']));
+        return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.13', 'msg'=>'The kiss tnc packet is still in use. ' . $rc['msg']));
     }
 
     //

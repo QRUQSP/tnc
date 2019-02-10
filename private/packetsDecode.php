@@ -48,6 +48,9 @@ function qruqsp_tnc_packetsDecode($ciniki, $tnid, $args) {
     if( $rc['stat'] != 'ok' ) {
         return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.8', 'msg'=>'Unable to check for undecoded packets', 'err'=>$rc['err']));
     }
+    if( !isset($rc['packets']) ) {
+        return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.17', 'msg'=>'No packet found', 'err'=>$rc['err']));
+    }
     $packets = $rc['packets'];
 
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');

@@ -20,7 +20,7 @@ function qruqsp_tnc_packetStoreProcess($ciniki, $tnid, $packet_data) {
         'raw_packet' => $packet_data,
         ), 0x07);
     if( $rc['stat'] != 'ok' ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.2', 'msg'=>'Unable to add packet', 'err'=>$rc['err']));
+        return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.29', 'msg'=>'Unable to add packet', 'err'=>$rc['err']));
     }
 
     $packet = array(

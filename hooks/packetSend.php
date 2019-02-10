@@ -18,7 +18,7 @@ function qruqsp_tnc_hooks_packetSend(&$ciniki, $tnid, $args) {
     // Check for required packet fields
     //
     if( !isset($args['packet']) ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.9', 'msg'=>'No packet specifiec'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.3', 'msg'=>'No packet specifiec'));
     }
     $packet = $args['packet'];
     if( !isset($packet['addrs']) || !is_array($packet['addrs']) ) {

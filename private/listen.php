@@ -21,7 +21,7 @@ function qruqsp_tnc_listen($ciniki, $tnid, $pts) {
     // Check the pts exists
     //
     if( !file_exists($pts) ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.1', 'msg'=>"Missing $pts file"));
+        return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.28', 'msg'=>"Missing $pts file"));
         exit;
     }
 

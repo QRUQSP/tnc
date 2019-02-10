@@ -79,7 +79,7 @@ if( $rc['stat'] != 'ok' ) {
     return $rc;
 }
 if( !isset($rc['modules']) ) {
-    return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.tenants.15', 'msg'=>'No modules enabled'));
+    return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.tnc.21', 'msg'=>'No modules enabled'));
 }
 $ciniki['tenant']['modules'] = $rc['modules'];
 
@@ -114,7 +114,7 @@ else {
     // Check the pts exists
     //
     if( !file_exists($pts) ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.1', 'msg'=>"Missing $pts file"));
+        return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.26', 'msg'=>"Missing $pts file"));
         exit;
     }
 

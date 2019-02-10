@@ -30,7 +30,7 @@ function qruqsp_tnc_packetDecode($ciniki, $tnid, $p) {
         //
         // FIXME: Add code to load packet from database
         //
-        return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.99', 'msg'=>'Missing code'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.22', 'msg'=>'Missing code'));
     }
 
     //
@@ -46,7 +46,7 @@ function qruqsp_tnc_packetDecode($ciniki, $tnid, $p) {
     $bytes = unpack('C*', $pkt['raw_packet']);
     $byte = array_shift($bytes);
     if( $byte != 0xc0 ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.99', 'msg'=>'Missing start of packet'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.23', 'msg'=>'Missing start of packet'));
     }
 
     //
@@ -214,9 +214,7 @@ function qruqsp_tnc_packetDecode($ciniki, $tnid, $p) {
     //
     // Check for hooks to receive packet
     //
-    error_log('check for modules');
     foreach($ciniki['tenant']['modules'] as $module => $m) {
-        error_log($module);
         list($pkg, $mod) = explode('.', $module);
         $rc = ciniki_core_loadMethod($ciniki, $pkg, $mod, 'hooks', 'packetReceived');
         if( $rc['stat'] == 'ok' ) {

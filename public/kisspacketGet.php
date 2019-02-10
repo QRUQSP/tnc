@@ -88,10 +88,10 @@ function qruqsp_tnc_kisspacketGet($ciniki) {
                 ),
             ));
         if( $rc['stat'] != 'ok' ) {
-            return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.103', 'msg'=>'KISS TNC Packet not found', 'err'=>$rc['err']));
+            return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.24', 'msg'=>'KISS TNC Packet not found', 'err'=>$rc['err']));
         }
         if( !isset($rc['packets'][0]) ) {
-            return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.104', 'msg'=>'Unable to find KISS TNC Packet'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.25', 'msg'=>'Unable to find KISS TNC Packet'));
         }
         $packet = $rc['packets'][0];
     }
