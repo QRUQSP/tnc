@@ -12,6 +12,22 @@ function qruqsp_tnc_objects(&$ciniki) {
     // Build the objects
     //
     $objects = array();
+    $objects['device'] = array(
+        'name' => 'TNC Device',
+        'sync' => 'yes',
+        'o_name' => 'device',
+        'o_container' => 'devices',
+        'table' => 'qruqsp_tnc_devices',
+        'fields' => array(
+            'name' => array('name'=>'Name'),
+            'status' => array('name'=>'Status', 'default'=>'10'),
+            'dtype' => array('name'=>'Device Type', 'default'=>'10'),
+            'device' => array('name'=>'Device', 'default'=>''),
+            'flags' => array('name'=>'Options', 'default'=>'0'),
+            'settings' => array('name'=>'Settings', 'default'=>''),
+            ),
+        'history_table' => 'qruqsp_tnc_history',
+        );
     $objects['kisspacket'] = array(
         'name'=>'KISS TNC Packet',
         'o_name'=>'packet',

@@ -18,11 +18,11 @@ function qruqsp_tnc_hooks_packetSend(&$ciniki, $tnid, $args) {
     // Check for required packet fields
     //
     if( !isset($args['packet']) ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.3', 'msg'=>'No packet specifiec'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.3', 'msg'=>'No packet specified'));
     }
     $packet = $args['packet'];
     if( !isset($packet['addrs']) || !is_array($packet['addrs']) ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.9', 'msg'=>'No addresses specifiec'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.9', 'msg'=>'No addresses specified'));
     }
     if( !isset($packet['control']) ) {
         $packet['control'] = 0x03;
@@ -31,7 +31,7 @@ function qruqsp_tnc_hooks_packetSend(&$ciniki, $tnid, $args) {
         $packet['protocol'] = 0xf0;
     }
     if( !isset($packet['data']) || $packet['data'] == '' ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.10', 'msg'=>'No data specifiec'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.10', 'msg'=>'No data specified'));
     }
 
     //

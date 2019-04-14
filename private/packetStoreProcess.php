@@ -25,6 +25,7 @@ function qruqsp_tnc_packetStoreProcess($ciniki, $tnid, $packet_data) {
 
     $packet = array(
         'id' => $rc['id'],
+        'uuid' => $rc['uuid'],
         'raw_packet' => $packet_data,
         );
 
@@ -34,8 +35,21 @@ function qruqsp_tnc_packetStoreProcess($ciniki, $tnid, $packet_data) {
     ciniki_core_loadMethod($ciniki, 'qruqsp', 'tnc', 'private', 'packetDecode');
     $rc = qruqsp_tnc_packetDecode($ciniki, $tnid, $packet);
     if( $rc['stat'] != 'ok' ) {
+        //
+        // Check if packet should be ignored
+        //
+        if( $rc['stat'] == 'ignore' ) {
+            print "IGNORE: Removing packet\n";
+            ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectDelete');
+            $rc = ciniki_core_objectDelete($ciniki, $tnid, 'qruqsp.tnc.kisspacket', $packet['id'], $packet['uuid'], 0x07);
+            if( $rc['stat'] != 'ok' ) {
+                return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.18', 'msg'=>'Unable to remove ignored packet', 'err'=>$rc['err']));
+            }
+        }
+
         return $rc;
     }
+
 
     return array('stat'=>'ok', 'packet'=>$rc['packet']);
 }

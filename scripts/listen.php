@@ -22,13 +22,12 @@ if( !file_exists($ciniki_root . '/ciniki-api.ini') ) {
 require_once($ciniki_root . '/ciniki-mods/core/private/loadMethod.php');
 require_once($ciniki_root . '/ciniki-mods/core/private/init.php');
 
-
 //
-// Initialize Q
+// Initialize Ciniki
 //
 $rc = ciniki_core_init($ciniki_root, 'json');
 if( $rc['stat'] != 'ok' ) {
-    print "ERR: Unable to initialize Q\n";
+    print "ERR: Unable to initialize Ciniki\n";
     exit;
 }
 
@@ -104,6 +103,20 @@ if( $pid > 0 ) {
 // Child process for decoding packets
 //
 else {
+    //
+    // Fork so separate process can start and monitor direwolf
+    //
+    $direwolf_pid = pcntl_fork();
+    if( $direwolf_pid > 0 ) {
+
+    }
+
+    else {
+        // start Direwolf
+    }
+    
+
+
     //
     // Load required functions
     //

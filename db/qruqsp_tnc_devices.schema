@@ -1,0 +1,57 @@
+#
+# Description
+# -----------
+# This table stores the TNC's for a system and the settings for each TNC.
+# This allows 2 TNC's to listen on 144.39 and 144.99 and digipeat between them.
+#
+# Fields
+# ------
+# id:                       The ID assigned to the item.
+# uuid:                     The Universal Unique ID.
+# tnid:                     The tenant the item is attached to.
+#
+# name:                     The name for the TNC.
+#
+# status:                   The current status of the TNC.
+#
+#                               10 - Inactive, not currently to be setup and running
+#                               40 - Online, should be running and a listener
+#                               60 - Offline, currently offline, trying to bring online
+#                               90 - Archive, Old TNC, no longer used
+#                               
+# dtype:                    The type of device.
+#
+#                               10 - Direwolf Virtual TNC
+#
+# device:                   The serial device of the TNC. 
+#                           Initially a direwolf pseudo terminal, but could be another serial port.
+#                           Depends on the device type.
+#
+# flags:                    The options for the TNC.
+#
+#                               0x01 - 
+#                               0x02 - 
+#                               0x04 - 
+#                               0x08 - 
+#
+# settings:                 The settings for the device stored as PHP Serialized.
+#
+# date_added:               The UTC date and time the record was added.
+# last_updated:             The UTC date and time the record was last updated.
+#
+create table qruqsp_tnc_devices (
+    id int not null auto_increment,
+    uuid char(36) not null,
+    tnid int not null,
+    name varchar(150) not null,
+    status tinyint unsigned not null,
+    dtype tinyint unsigned not null,
+    device varchar(250) not null,
+    flags int not null,
+    settings varchar(1000) not null,
+    date_added datetime not null,
+    last_updated datetime not null,
+    primary key (id),
+    unique index (uuid),
+    index sync (tnid, uuid, last_updated)
+) ENGINE='InnoDB', COMMENT='v1.01';

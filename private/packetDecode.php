@@ -84,6 +84,13 @@ function qruqsp_tnc_packetDecode($ciniki, $tnid, $p) {
         }
 
         //
+        // Check if this station was the source
+        //
+        if( $addr['callsign'] . '-' . $addr['ssid'] == $ciniki['tenant']['callsign'] ) {
+            return array('stat'=>'ignore', 'err'=>array('code'=>'qruqsp.tnc.39', 'msg'=>'Packet from this station'));
+        }
+
+        //
         // The last bit of last byte is 1, then this is the last address.
         //
         if( ($byte&0x01) == 0x01 ) {

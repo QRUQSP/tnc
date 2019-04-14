@@ -97,6 +97,7 @@ function qruqsp_tnc_main() {
             p.show(cb);
         });
     }
+    this.menu.addButton('settings', 'Settings', 'M.startApp(\'qruqsp.tnc.settings\',null,\'M.qruqsp_tnc_main.menu.open();\');');
     this.menu.addClose('Back');
 
     //
