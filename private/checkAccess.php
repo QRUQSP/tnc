@@ -31,11 +31,12 @@ function qruqsp_tnc_checkAccess(&$ciniki, $tnid, $method) {
     // Check to makes sure the session user is a tenant operator
     //
     $strsql = "SELECT tnid, user_id "
-        . "FROM ciniki_users "
+        . "FROM ciniki_tenant_users "
         . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND user_id = '" . ciniki_core_dbQuote($ciniki, $ciniki['session']['user']['id']) . "' "
+        . "AND package = 'ciniki' "
         . "AND status = 10 "
-        . "AND permission_group = 'operators' "
+        . "AND (permission_group = 'owners' OR permission_group = 'employees' OR permission_group = 'resellers') "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.core', 'user');
