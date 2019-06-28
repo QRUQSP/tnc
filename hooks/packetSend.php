@@ -119,6 +119,20 @@ function qruqsp_tnc_hooks_packetSend(&$ciniki, $tnid, $args) {
     if( $pts_handle === false ) {
         return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.14', 'msg'=>'Unable to open tnc'));
     }
+    //
+    // Check if packet should be logged
+    //
+    if( isset($ciniki['config']['qruqsp.tnc']['packet.logging']) 
+        && $ciniki['config']['qruqsp.tnc']['packet.logging'] == 'yes' 
+        && isset($ciniki['config']['qruqsp.core']['log_dir'])
+        && $ciniki['config']['qruqsp.core']['log_dir'] != '' 
+        ) {
+        $dt = new DateTime('now', new DateTimezone('UTC'));
+        file_put_contents($ciniki['config']['qruqsp.core']['log_dir'] . '/qruqsp.tnc.transmit.' . $dt->format('Y-m') . '.log',  
+            '[' . $dt->format('d/M/Y:H:i:s O') . '] ' . $packet['data'] . "\n",
+            FILE_APPEND);
+    }
+
     $rc = fwrite($pts_handle, $bytes, strlen($bytes));
     if( $rc === false || $rc == 0 ) {
         return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.16', 'msg'=>'Unable to write to tnc'));
