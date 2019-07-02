@@ -35,10 +35,10 @@ function qruqsp_tnc_deviceConfigUpdate(&$ciniki, $tnid, $device_id) {
             ),
         ));
     if( $rc['stat'] != 'ok' ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.36', 'msg'=>'TNC Device not found', 'err'=>$rc['err']));
+        return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.40', 'msg'=>'TNC Device not found', 'err'=>$rc['err']));
     }
     if( !isset($rc['devices'][0]) ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.37', 'msg'=>'Unable to find TNC Device'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.41', 'msg'=>'Unable to find TNC Device'));
     }
     $device = $rc['devices'][0];
 

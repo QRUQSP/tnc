@@ -83,7 +83,7 @@ function qruqsp_tnc_deviceAdd(&$ciniki) {
     ciniki_core_loadMethod($ciniki, 'qruqsp', 'tnc', 'private', 'deviceConfigUpdate');
     $rc = qruqsp_tnc_deviceConfigUpdate($ciniki, $args['tnid'], $device_id);
     if( $rc['stat'] != 'ok' ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.33', 'msg'=>'Unable to update config file', 'err'=>$rc['err']));
+        return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.35', 'msg'=>'Unable to update config file', 'err'=>$rc['err']));
     }
 
     //
