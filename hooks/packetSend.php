@@ -127,8 +127,13 @@ function qruqsp_tnc_hooks_packetSend(&$ciniki, $tnid, $args) {
         && isset($ciniki['config']['qruqsp.core']['log_dir'])
         && $ciniki['config']['qruqsp.core']['log_dir'] != '' 
         ) {
+        $log_dir = $ciniki['config']['qruqsp.core']['log_dir'] . '/qruqsp.tnc';
+        if( !file_exists($log_dir) ) {
+            mkdir($log_dir);
+        }
+
         $dt = new DateTime('now', new DateTimezone('UTC'));
-        file_put_contents($ciniki['config']['qruqsp.core']['log_dir'] . '/qruqsp.tnc.transmit.' . $dt->format('Y-m') . '.log',  
+        file_put_contents($log_dir . '/transmit.' . $dt->format('Y-m') . '.log',  
             '[' . $dt->format('d/M/Y:H:i:s O') . '] ' . $packet['data'] . "\n",
             FILE_APPEND);
     }
