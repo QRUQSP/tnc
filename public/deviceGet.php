@@ -64,7 +64,7 @@ function qruqsp_tnc_deviceGet($ciniki) {
             'device'=>'',
             'flags'=>'0',
             'settings.ADEVICE'=>'plughw:1,0',
-            'settings.PTT'=>'GPIO 23',
+            'settings.PTT'=>'GPIO 24',
         );
     }
 
