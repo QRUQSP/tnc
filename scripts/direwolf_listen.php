@@ -139,7 +139,9 @@ if( $pid > 0 ) {
     //
     // Start Direwolf and wait for it to finish
     //
-    if( file_exists('/usr/local/bin/direwolf') ) {
+    if( file_exists($ciniki['config']['ciniki.core']['root_dir'] . '/qruqsp-mods/pibin/bin/direwolf') ) {
+        $cmd = $ciniki['config']['ciniki.core']['root_dir'] . '/qruqsp-mods/pibin/bin/direwolf';
+    } elseif( file_exists('/usr/local/bin/direwolf') ) {
         $cmd = '/usr/local/bin/direwolf';
     } elseif( file_exists('/usr/local/sbin/direwolf') ) {
         $cmd = '/usr/local/sbin/direwolf';
