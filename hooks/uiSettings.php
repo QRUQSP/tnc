@@ -24,12 +24,15 @@ function qruqsp_tnc_hooks_uiSettings(&$ciniki, $tnid, $args) {
             || ($ciniki['session']['user']['perms']&0x01) == 0x01
             )
         ) {
-        $menu_item = array(
+        //
+        // The main UI is currently broken and not used. It will be fixed in the future
+        //
+/*        $menu_item = array(
             'priority'=>5000,
             'label'=>'TNC',
             'edit'=>array('app'=>'qruqsp.tnc.main'),
             );
-        $rsp['menu_items'][] = $menu_item;
+        $rsp['menu_items'][] = $menu_item; */
 
         //
         // Add settings menu item
