@@ -26,6 +26,7 @@ function qruqsp_tnc_packetStoreProcess($ciniki, $tnid, $packet_data) {
     $packet = array(
         'id' => $rc['id'],
         'uuid' => $rc['uuid'],
+        'utc_of_traffic' => $dt->format('Y-m-d H:i:s'),
         'raw_packet' => $packet_data,
         );
 
