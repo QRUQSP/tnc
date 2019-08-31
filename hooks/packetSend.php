@@ -35,12 +35,23 @@ function qruqsp_tnc_hooks_packetSend(&$ciniki, $tnid, $args) {
     }
 
     //
-    // Make sure pts is defined in config file
+    // Load the pts device from database
     //
-    if( !isset($ciniki['config']['qruqsp.tnc']['pts']) || $ciniki['config']['qruqsp.tnc']['pts'] == '' ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.6', 'msg'=>'No tnc defined in config.'));
+    $strsql = "SELECT device "
+        . "FROM qruqsp_tnc_devices "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
+        . "LIMIT 1 "
+        . "";
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
+    $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'qruqsp.tnc', 'device');
+    if( $rc['stat'] != 'ok' ) {
+        return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.21', 'msg'=>'Unable to find TNC', 'err'=>$rc['err']));
     }
-
+    if( !isset($rc['device']['device']) || $rc['device']['device'] == '' ) {
+        return array('stat'=>'fail', 'err'=>array('code'=>'qruqsp.tnc.22', 'msg'=>'No TNC running', 'err'=>$rc['err']));
+    }
+    $pts_filename = $rc['device']['device'];
+    
     $bytes = '';
 
     //
@@ -100,10 +111,8 @@ function qruqsp_tnc_hooks_packetSend(&$ciniki, $tnid, $args) {
     $bytes .= pack('C', 0xc0);
    
     //
-    // Check the pts
+    // Check if the pts is a symlink, attach directly to device
     //
-    $pts_filename = $ciniki['config']['qruqsp.tnc']['pts'];
-
     if( is_link($pts_filename) ) {
         $pts_filename = readlink($pts_filename);
     }
