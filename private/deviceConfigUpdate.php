@@ -55,6 +55,8 @@ function qruqsp_tnc_deviceConfigUpdate(&$ciniki, $tnid, $device_id) {
         'DWAIT' => '0',
         'TXDELAY' => '10',
         'TXTAIL' => '10',
+        'AGWPORT' => '8000',
+        'KISSPORT' => '8001',
         );
     $db_settings = unserialize($device['settings']);
     foreach($db_settings as $k => $v) {
