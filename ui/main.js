@@ -170,15 +170,15 @@ function qruqsp_tnc_main() {
         }
     }
     this.packet.remove = function() {
-        if( confirm('Are you sure you want to remove kisspacket?') ) {
-            M.api.getJSONCb('qruqsp.tnc.kisspacketDelete', {'tnid':M.curTenantID, 'kisspacket_id':this.kisspacket_id}, function(rsp) {
+        M.confirm('Are you sure you want to remove kisspacket?',null,function() {
+            M.api.getJSONCb('qruqsp.tnc.kisspacketDelete', {'tnid':M.curTenantID, 'kisspacket_id':M.qruqsp_tnc_main.packet.kisspacket_id}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
                 }
                 M.qruqsp_tnc_main.packet.close();
             });
-        }
+        });
     }
     this.packet.nextButtonFn = function() {
         if( this.nplist != null && this.nplist.indexOf('' + this.kisspacket_id) < (this.nplist.length - 1) ) {
@@ -214,7 +214,7 @@ function qruqsp_tnc_main() {
         //
         var ac = M.createContainer(ap, 'qruqsp_tnc_main', 'yes');
         if( ac == null ) {
-            alert('App Error');
+            M.alert('App Error');
             return false;
         }
         
