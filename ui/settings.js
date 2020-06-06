@@ -113,15 +113,15 @@ function qruqsp_tnc_settings() {
         }
     }
     this.device.remove = function() {
-        if( confirm('Are you sure you want to remove device?') ) {
-            M.api.getJSONCb('qruqsp.tnc.deviceDelete', {'tnid':M.curTenantID, 'device_id':this.device_id}, function(rsp) {
+        M.confirm('Are you sure you want to remove device?',null,function() {
+            M.api.getJSONCb('qruqsp.tnc.deviceDelete', {'tnid':M.curTenantID, 'device_id':M.qruqsp_tnc_settings.device.device_id}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
                 }
                 M.qruqsp_tnc_settings.device.close();
             });
-        }
+        });
     }
     this.device.nextButtonFn = function() {
         if( this.nplist != null && this.nplist.indexOf('' + this.device_id) < (this.nplist.length - 1) ) {
@@ -157,7 +157,7 @@ function qruqsp_tnc_settings() {
         //
         var ac = M.createContainer(ap, 'qruqsp_tnc_settings', 'yes');
         if( ac == null ) {
-            alert('App Error');
+            M.alert('App Error');
             return false;
         }
         
