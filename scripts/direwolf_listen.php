@@ -136,7 +136,7 @@ $ciniki['tenant']['modules'] = $rc['modules'];
 // Parent process
 //
 if( $pid > 0 ) {
-    exec('amixer -c 1 set Mic 0db');
+    exec('amixer -c 1 set Mic 100%');
     exec('amixer -c 1 set Headphone 50%');
 
     //
